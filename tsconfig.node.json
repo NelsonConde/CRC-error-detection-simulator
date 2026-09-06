@@ -5,6 +5,11 @@
     "lib": ["ES2023"],
     "types": ["node"],
     "skipLibCheck": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
 
     /* Bundler mode */
     "module": "nodenext",
