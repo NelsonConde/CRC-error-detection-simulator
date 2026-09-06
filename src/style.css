@@ -2,9 +2,16 @@
 
 @layer base {
   :root {
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-    color: #0f172a;
-    background-color: #f8fafc;
+    font-family:
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+    color: #e2e8f0;
+    background-color: #020617;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -27,6 +34,7 @@
 
   body {
     min-height: 100vh;
+    background: #020617;
   }
 
   button,
@@ -34,5 +42,56 @@
   select,
   textarea {
     font: inherit;
+  }
+
+  button,
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  .flow-panel {
+    @apply min-h-56 min-w-0 rounded-2xl border border-slate-800 bg-slate-900/65 p-4;
+  }
+
+  .status-chip {
+    @apply rounded-full border border-slate-700 bg-slate-950/60 px-2.5 py-1 text-[10px] font-medium tracking-wide text-slate-400 uppercase;
+  }
+
+  .data-label {
+    @apply mb-1 text-[10px] font-semibold tracking-[0.13em] text-slate-500 uppercase;
+  }
+
+  .binary-value {
+    @apply overflow-hidden font-mono text-xs leading-relaxed text-slate-300 break-all;
+  }
+
+  .control-button {
+    @apply inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 disabled:pointer-events-none disabled:opacity-35;
+  }
+
+  .control-button-primary {
+    @apply min-w-28 border-cyan-400/50 bg-cyan-400/10 text-cyan-200 hover:border-cyan-300 hover:bg-cyan-400/15;
+  }
+
+  .mode-button {
+    @apply inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:text-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300;
+  }
+
+  .mode-button-active {
+    @apply bg-slate-700 text-white;
+  }
+
+  .bit-button {
+    @apply grid size-7 place-items-center rounded-md border border-slate-700 bg-slate-950 text-xs text-slate-300 transition enabled:hover:border-cyan-400 enabled:hover:text-cyan-200 disabled:cursor-default;
+  }
+
+  .bit-button-altered {
+    @apply border-rose-400/70 bg-rose-400/15 text-rose-100;
   }
 }
