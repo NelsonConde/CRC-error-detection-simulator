@@ -2,10 +2,14 @@
 import { CircleAlert, ShieldCheck } from 'lucide-vue-next'
 import { computed } from 'vue'
 
+import type { FrameBits } from '@/core'
 import type { SimulationResult } from '@/simulation'
 
 const props = defineProps<{
   result: SimulationResult
+  embedded?: boolean
+  sentFrame?: FrameBits | undefined
+  receivedFrame?: FrameBits | undefined
 }>()
 
 const messageComparison = computed(() => {
@@ -26,10 +30,14 @@ const messageComparison = computed(() => {
   <section
     aria-labelledby="result-title"
     aria-live="polite"
-    class="result-summary rounded-2xl border p-5 sm:p-6"
-    :class="
-      result.errorDetected ? 'border-rose-400/30 bg-rose-400/8' : 'border-teal-400/30 bg-teal-400/8'
-    "
+    class="result-summary rounded-xl border"
+    :class="[
+      embedded
+        ? 'border-transparent bg-transparent p-0'
+        : result.errorDetected
+          ? 'border-rose-400/30 bg-rose-400/8 p-5 sm:p-6'
+          : 'border-teal-400/30 bg-teal-400/8 p-5 sm:p-6',
+    ]"
   >
     <div class="flex items-start gap-3">
       <CircleAlert
@@ -40,7 +48,7 @@ const messageComparison = computed(() => {
       />
       <ShieldCheck v-else :size="22" class="mt-0.5 shrink-0 text-teal-300" aria-hidden="true" />
       <div class="min-w-0 flex-1">
-        <h2 id="result-title" class="font-semibold text-slate-100">Resultado</h2>
+        <h2 id="result-title" class="font-semibold text-slate-100">Resultado de la verificación</h2>
         <p
           class="mt-1 text-sm font-medium"
           :class="result.errorDetected ? 'text-rose-200' : 'text-teal-200'"
@@ -50,7 +58,7 @@ const messageComparison = computed(() => {
       </div>
     </div>
 
-    <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+    <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
       <div class="sm:col-span-2 lg:col-span-2">
         <dt class="data-label">Comparación de mensajes</dt>
         <dd v-if="result.originalMessage !== null && result.receivedMessage !== null">
@@ -95,6 +103,20 @@ const messageComparison = computed(() => {
               ? result.alterations.map(({ position }) => position + 1).join(', ')
               : 'Ninguno'
           }}
+        </dd>
+      </div>
+      <div v-if="sentFrame" class="min-w-0 sm:col-span-2">
+        <dt class="data-label">Frame enviado</dt>
+        <dd class="result-binary" :title="sentFrame">{{ sentFrame }}</dd>
+      </div>
+      <div v-if="receivedFrame" class="min-w-0 sm:col-span-2">
+        <dt class="data-label">Frame recibido</dt>
+        <dd
+          class="result-binary"
+          :class="result.alterations.length ? 'text-rose-200' : 'text-teal-200'"
+          :title="receivedFrame"
+        >
+          {{ receivedFrame }}
         </dd>
       </div>
     </dl>

@@ -26,17 +26,17 @@ const activeGroupIndex = computed(() => {
 <template>
   <nav
     aria-label="Progreso de la simulación"
-    class="rounded-2xl border border-slate-800 bg-slate-900/55 px-4 py-3.5"
+    class="rounded-xl border border-slate-800 bg-slate-900/55 px-3 py-2"
   >
     <ol class="grid grid-cols-5 gap-2">
       <li
         v-for="(group, index) in groups"
         :key="group.label"
-        class="relative flex min-w-0 flex-col items-center gap-2 text-center"
+        class="relative flex min-w-0 flex-col items-center gap-1 text-center"
         :aria-current="index === activeGroupIndex ? 'step' : undefined"
       >
         <span
-          class="timeline-marker relative z-10 grid size-7 place-items-center rounded-full border text-xs font-bold"
+          class="timeline-marker relative z-10 grid size-6 place-items-center rounded-full border text-[10px] font-bold"
           :class="
             index < activeGroupIndex
               ? 'border-teal-400 bg-teal-400 text-slate-950'
@@ -57,7 +57,7 @@ const activeGroupIndex = computed(() => {
         <span
           v-if="index < groups.length - 1"
           aria-hidden="true"
-          class="timeline-connector absolute top-3.5 left-[60%] -z-0 hidden h-px w-[80%] sm:block"
+          class="timeline-connector absolute top-3 left-[60%] -z-0 hidden h-px w-[80%] sm:block"
           :class="index < activeGroupIndex ? 'bg-teal-400/70' : 'bg-slate-700'"
         />
       </li>

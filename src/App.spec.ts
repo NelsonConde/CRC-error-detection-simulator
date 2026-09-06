@@ -57,6 +57,11 @@ describe('CRC simulator UI', () => {
     await wrapper.get('button[type="submit"]').trigger('submit')
 
     expect(wrapper.text()).toContain('La simulación conserva la entrada antes de transformarla.')
+    expect(wrapper.get('details').attributes('open')).toBeUndefined()
+    expect(wrapper.get('[aria-label="Resumen de configuración"]').text()).toContain('HOLA')
+    expect(wrapper.get('[aria-label="Resumen de configuración"]').text()).toContain('10011')
+    expect(wrapper.get('[aria-label="Resumen de configuración"]').text()).toContain('Sin error')
+    const stepBeforeModeChange = wrapper.get('[data-testid="playback-step"]').text()
 
     const laboratoryButton = wrapper
       .findAll('button')
@@ -66,9 +71,33 @@ describe('CRC simulator UI', () => {
     await laboratoryButton.trigger('click')
 
     expect(laboratoryButton.attributes('aria-pressed')).toBe('true')
+    expect(wrapper.get('details').attributes('open')).toBeDefined()
+    expect(wrapper.get('[aria-label="Contexto técnico del laboratorio"]').text()).toContain(
+      'Generador',
+    )
+    expect(wrapper.get('[data-testid="playback-step"]').text()).toBe(stepBeforeModeChange)
     expect(wrapper.text()).not.toContain(
       'La simulación conserva la entrada antes de transformarla.',
     )
+  })
+
+  it('expands the Learn configuration without losing its values', async () => {
+    const wrapper = mount(App)
+    await wrapper.get('textarea[aria-label="Mensaje"]').setValue('HOLA CRC')
+    await wrapper.get('button[type="submit"]').trigger('submit')
+
+    expect(wrapper.get('details').attributes('open')).toBeUndefined()
+    expect(wrapper.get('[aria-label="Resumen de configuración"]').text()).toContain('HOLA CRC')
+
+    await wrapper.get('summary').trigger('click')
+
+    expect(wrapper.get('details').attributes('open')).toBeDefined()
+    expect(
+      (wrapper.get('textarea[aria-label="Mensaje"]').element as HTMLTextAreaElement).value,
+    ).toBe('HOLA CRC')
+    expect(
+      (wrapper.get('input[aria-label="Polinomio generador"]').element as HTMLInputElement).value,
+    ).toBe('10011')
   })
 
   it('shows domain validation errors without breaking the application', async () => {
@@ -87,10 +116,13 @@ describe('CRC simulator UI', () => {
 
     await advanceToEnd(wrapper)
 
-    expect(wrapper.text()).toContain('No se detectaron errores')
-    expect(wrapper.text()).toContain('Mensaje original')
-    expect(wrapper.text()).toContain('Mensaje recibido')
-    expect(wrapper.text()).toContain('Residuo')
+    const currentStepPanel = wrapper.get('[data-testid="current-step-panel"]')
+    expect(currentStepPanel.text()).toContain('No se detectaron errores')
+    expect(currentStepPanel.text()).toContain('Mensaje original')
+    expect(currentStepPanel.text()).toContain('Mensaje recibido')
+    expect(currentStepPanel.text()).toContain('Frame enviado')
+    expect(currentStepPanel.text()).toContain('Frame recibido')
+    expect(currentStepPanel.text()).toContain('Residuo')
   })
 
   it('allows a manual bit alteration and reflects the received message', async () => {
@@ -152,8 +184,18 @@ describe('CRC simulator UI', () => {
     await advanceToSenderDivision(wrapper)
 
     const visualizer = wrapper.get('[data-testid="crc-division-visualizer"]').element
+    const globalTrack = wrapper.get(
+      '[aria-label="Cadena binaria desplazable con ventana activa"]',
+    ).element
+    const activePosition = wrapper.get('[data-active-window="start"]').attributes('data-bit-index')
     await wrapper.get('button[aria-label="Siguiente paso"]').trigger('click')
 
     expect(wrapper.get('[data-testid="crc-division-visualizer"]').element).toBe(visualizer)
+    expect(
+      wrapper.get('[aria-label="Cadena binaria desplazable con ventana activa"]').element,
+    ).toBe(globalTrack)
+    expect(wrapper.get('[data-active-window="start"]').attributes('data-bit-index')).not.toBe(
+      activePosition,
+    )
   })
 })

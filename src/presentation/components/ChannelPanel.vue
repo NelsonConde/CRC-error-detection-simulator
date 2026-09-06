@@ -52,13 +52,13 @@ async function flip(position: number): Promise<void> {
   >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
-        <Radio :size="18" class="text-blue-300" aria-hidden="true" />
-        <h2 id="channel-title" class="font-semibold text-slate-100">Canal</h2>
+        <Radio :size="16" class="text-blue-300" aria-hidden="true" />
+        <h2 id="channel-title" class="text-sm font-semibold text-slate-100">Canal</h2>
       </div>
       <span class="status-chip">{{ statusLabels[status] }}</span>
     </header>
 
-    <div v-if="simulation && isVisible" class="mt-4 space-y-3 text-sm">
+    <div v-if="simulation && isVisible" class="flow-panel-body mt-2 space-y-2 text-xs">
       <div>
         <p class="data-label">Trama enviada</p>
         <p class="binary-value">{{ simulation.sentFrame }}</p>
@@ -101,6 +101,6 @@ async function flip(position: number): Promise<void> {
       </div>
       <p v-else class="text-xs text-teal-300">Sin alteraciones registradas.</p>
     </div>
-    <p v-else class="mt-5 text-sm text-slate-500">Esperando la trama del emisor.</p>
+    <p v-else class="flow-panel-body mt-2 text-xs text-slate-500">Esperando la trama del emisor.</p>
   </article>
 </template>

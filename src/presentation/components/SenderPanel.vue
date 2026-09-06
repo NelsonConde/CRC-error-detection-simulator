@@ -45,13 +45,13 @@ const isActive = computed(() => ['encoding', 'crc-prepared', 'dividing'].include
   >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
-        <Cpu :size="18" class="text-cyan-300" aria-hidden="true" />
-        <h2 id="sender-title" class="font-semibold text-slate-100">Emisor</h2>
+        <Cpu :size="16" class="text-cyan-300" aria-hidden="true" />
+        <h2 id="sender-title" class="text-sm font-semibold text-slate-100">Emisor</h2>
       </div>
       <span class="status-chip">{{ statusLabels[status] }}</span>
     </header>
 
-    <div v-if="simulation" class="mt-4 space-y-3 text-sm">
+    <div v-if="simulation" class="flow-panel-body mt-2 space-y-2 text-xs">
       <div>
         <p class="data-label">Entrada</p>
         <p class="text-slate-200 break-words">{{ simulation.configuration.input.value }}</p>
@@ -75,7 +75,7 @@ const isActive = computed(() => ['encoding', 'crc-prepared', 'dividing'].include
         </div>
       </template>
     </div>
-    <p v-else class="mt-5 text-sm text-slate-500">
+    <p v-else class="flow-panel-body mt-2 text-xs text-slate-500">
       Inicia una simulación para preparar el mensaje.
     </p>
   </article>

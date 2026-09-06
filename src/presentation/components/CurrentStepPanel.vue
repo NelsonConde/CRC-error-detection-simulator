@@ -11,6 +11,7 @@ import type {
 
 import CrcDivisionVisualizer from './CrcDivisionVisualizer.vue'
 import FrameComposition from './FrameComposition.vue'
+import ResultSummary from './ResultSummary.vue'
 import TransmissionVisualizer from './TransmissionVisualizer.vue'
 
 const props = defineProps<{
@@ -47,23 +48,24 @@ const completedEncodingSteps = computed(() => {
 
 <template>
   <section
-    class="current-step-panel min-h-[27rem] overflow-hidden rounded-2xl border border-cyan-400/25 bg-slate-900 p-5 sm:p-6"
+    data-testid="current-step-panel"
+    class="current-step-panel flex h-full min-h-[28rem] overflow-hidden rounded-xl border border-cyan-400/25 bg-slate-900 p-3 sm:p-4 lg:min-h-0"
     aria-live="polite"
   >
-    <div class="step-content">
-      <div v-if="step" class="mb-5 flex flex-wrap items-start justify-between gap-3">
+    <div class="step-content flex min-h-0 flex-1 flex-col">
+      <div v-if="step" class="mb-3 flex shrink-0 flex-wrap items-start justify-between gap-2">
         <div>
           <p class="mb-1 text-xs font-semibold tracking-[0.16em] text-cyan-400 uppercase">
             {{ stageLabels[step.stage] }}
           </p>
-          <h2 class="text-xl font-semibold text-white">{{ step.learning.title }}</h2>
+          <h2 class="text-lg font-semibold text-white">{{ step.learning.title }}</h2>
         </div>
         <span class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-400">
           Step {{ step.index + 1 }}
         </span>
       </div>
 
-      <div v-if="!step" class="grid min-h-56 place-items-center text-center">
+      <div v-if="!step" class="grid min-h-0 flex-1 place-items-center text-center">
         <div>
           <Binary :size="32" class="mx-auto mb-3 text-slate-600" aria-hidden="true" />
           <h2 class="font-semibold text-slate-200">Simulación preparada</h2>
@@ -76,13 +78,42 @@ const completedEncodingSteps = computed(() => {
       <template v-else>
         <div
           v-if="showLearning"
-          class="mb-5 flex items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/8 px-3 py-2.5 text-sm text-blue-100"
+          class="mb-3 flex shrink-0 items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/8 px-3 py-2 text-xs leading-relaxed text-blue-100"
         >
           <Info :size="16" class="mt-0.5 shrink-0 text-blue-300" aria-hidden="true" />
           <p>{{ step.learning.explanation }}</p>
         </div>
 
-        <div class="stage-content-area relative min-h-52">
+        <div
+          v-else-if="simulation"
+          class="mb-3 flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-slate-700/70 bg-slate-950/55 px-3 py-2 text-[11px] text-slate-400"
+          aria-label="Contexto técnico del laboratorio"
+        >
+          <span
+            >Generador
+            <strong class="font-mono text-cyan-200">{{ simulation.generator.bits }}</strong></span
+          >
+          <span
+            v-if="step.participants.sender === 'frame-built'"
+            class="inline-block min-w-0 max-w-full truncate align-bottom"
+          >
+            Frame <strong class="font-mono text-slate-200">{{ simulation.sentFrame }}</strong>
+          </span>
+          <span v-if="step.participants.channel !== 'waiting'">
+            Alteraciones
+            <strong :class="simulation.alterations.length ? 'text-rose-300' : 'text-teal-300'">
+              {{ simulation.alterations.length }}
+            </strong>
+          </span>
+          <span v-if="step.participants.receiver === 'complete'">
+            Residuo
+            <strong class="font-mono text-slate-200">{{ simulation.result.remainder }}</strong>
+          </span>
+        </div>
+
+        <div
+          class="stage-content-area relative min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
+        >
           <Transition name="stage-content">
             <div :key="step.stage" class="stage-content">
               <div v-if="step.stage === 'initial'" class="space-y-2">
@@ -198,16 +229,13 @@ const completedEncodingSteps = computed(() => {
                 </template>
               </div>
 
-              <div v-else-if="step.stage === 'result'" class="result-status space-y-2">
-                <p class="data-label">Verificación CRC</p>
-                <p
-                  class="text-xl font-semibold"
-                  :class="step.result.errorDetected ? 'text-rose-300' : 'text-teal-300'"
-                >
-                  {{ step.result.errorDetected ? 'Error detectado' : 'No se detectaron errores' }}
-                </p>
-                <p class="font-mono text-sm text-slate-300">Residuo: {{ step.result.remainder }}</p>
-              </div>
+              <ResultSummary
+                v-else-if="step.stage === 'result'"
+                :result="step.result"
+                :sent-frame="simulation?.sentFrame"
+                :received-frame="simulation?.receivedFrame"
+                embedded
+              />
             </div>
           </Transition>
         </div>

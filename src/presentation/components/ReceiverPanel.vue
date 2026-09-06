@@ -34,13 +34,13 @@ const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(statu
   >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
-        <ShieldCheck :size="18" class="text-teal-300" aria-hidden="true" />
-        <h2 id="receiver-title" class="font-semibold text-slate-100">Receptor</h2>
+        <ShieldCheck :size="16" class="text-teal-300" aria-hidden="true" />
+        <h2 id="receiver-title" class="text-sm font-semibold text-slate-100">Receptor</h2>
       </div>
       <span class="status-chip">{{ statusLabels[status] }}</span>
     </header>
 
-    <div v-if="simulation && isVisible" class="mt-4 space-y-3 text-sm">
+    <div v-if="simulation && isVisible" class="flow-panel-body mt-2 space-y-2 text-xs">
       <div>
         <p class="data-label">Trama recibida</p>
         <p class="binary-value">{{ simulation.receivedFrame }}</p>
@@ -66,6 +66,8 @@ const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(statu
         </div>
       </Transition>
     </div>
-    <p v-else class="mt-5 text-sm text-slate-500">Esperando la transmisión del canal.</p>
+    <p v-else class="flow-panel-body mt-2 text-xs text-slate-500">
+      Esperando la transmisión del canal.
+    </p>
   </article>
 </template>
