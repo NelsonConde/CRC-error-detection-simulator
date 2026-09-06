@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FlaskConical, GraduationCap } from 'lucide-vue-next'
+import { watch } from 'vue'
 
 import ChannelPanel from './components/ChannelPanel.vue'
 import CurrentStepPanel from './components/CurrentStepPanel.vue'
@@ -9,6 +10,7 @@ import ReceiverPanel from './components/ReceiverPanel.vue'
 import SenderPanel from './components/SenderPanel.vue'
 import SimulatorConfigPanel from './components/SimulatorConfigPanel.vue'
 import { useCrcSimulator } from './composables/useCrcSimulator'
+import LaboratoryWorkspace from './laboratory/LaboratoryWorkspace.vue'
 
 const {
   experienceMode,
@@ -18,11 +20,15 @@ const {
   channelMode,
   playbackSpeed,
   simulation,
+  laboratorySimulation,
   errorMessage,
   player,
   startSimulation,
+  calculateLaboratory,
   applyManualAlteration,
+  applyLaboratoryManualAlteration,
   resetSimulation,
+  clearLaboratory,
 } = useCrcSimulator()
 
 const {
@@ -36,7 +42,12 @@ const {
   togglePlay,
   next,
   previous,
+  pause,
 } = player
+
+watch(experienceMode, (mode) => {
+  if (mode === 'lab') pause()
+})
 </script>
 
 <template>
@@ -86,6 +97,7 @@ const {
     </header>
 
     <main
+      v-if="experienceMode === 'learn'"
       class="mx-auto grid w-full max-w-[1600px] flex-1 gap-3 px-4 py-3 sm:px-6 lg:min-h-0 lg:grid-cols-[240px_minmax(0,1fr)] lg:overflow-hidden lg:px-8 xl:grid-cols-[260px_minmax(0,1fr)]"
     >
       <SimulatorConfigPanel
@@ -134,5 +146,18 @@ const {
         />
       </div>
     </main>
+
+    <LaboratoryWorkspace
+      v-else
+      v-model:input-kind="inputKind"
+      v-model:input-value="inputValue"
+      v-model:generator="generator"
+      v-model:channel-mode="channelMode"
+      :simulation="laboratorySimulation"
+      :error-message="errorMessage"
+      @calculate="calculateLaboratory"
+      @clear="clearLaboratory"
+      @flip="applyLaboratoryManualAlteration"
+    />
   </div>
 </template>

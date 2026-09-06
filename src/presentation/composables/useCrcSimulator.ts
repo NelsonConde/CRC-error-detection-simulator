@@ -24,6 +24,7 @@ export function useCrcSimulator() {
   const channelMode = ref<ChannelMode>('none')
   const playbackSpeed = ref<PlaybackSpeed>('manual')
   const simulation = shallowRef<CrcSimulation | null>(null)
+  const laboratorySimulation = shallowRef<CrcSimulation | null>(null)
   const errorMessage = ref<string | null>(null)
   const player = useSimulationPlayer(playbackSpeed.value)
 
@@ -39,6 +40,9 @@ export function useCrcSimulator() {
   })
 
   watch(playbackSpeed, (nextSpeed) => player.setSpeed(nextSpeed))
+  watch([inputKind, inputValue, generator, channelMode], () => {
+    laboratorySimulation.value = null
+  })
   watch(
     () => player.current.value?.stage,
     (stage) => {
@@ -51,11 +55,7 @@ export function useCrcSimulator() {
 
   function startSimulation(): void {
     try {
-      const nextSimulation = createCrcSimulation({
-        input: { kind: inputKind.value, value: inputValue.value },
-        generator: generator.value,
-        channel: createChannelPlan(channelMode.value),
-      })
+      const nextSimulation = createConfiguredSimulation()
 
       simulation.value = nextSimulation
       errorMessage.value = null
@@ -64,6 +64,17 @@ export function useCrcSimulator() {
       player.pause()
       errorMessage.value =
         error instanceof Error ? error.message : 'No se pudo iniciar la simulación.'
+    }
+  }
+
+  function calculateLaboratory(): void {
+    try {
+      laboratorySimulation.value = createConfiguredSimulation()
+      errorMessage.value = null
+    } catch (error: unknown) {
+      laboratorySimulation.value = null
+      errorMessage.value =
+        error instanceof Error ? error.message : 'No se pudo calcular el escenario CRC.'
     }
   }
 
@@ -88,6 +99,26 @@ export function useCrcSimulator() {
     }
   }
 
+  function applyLaboratoryManualAlteration(position: number): void {
+    const activeSimulation = laboratorySimulation.value
+    if (activeSimulation === null || activeSimulation.configuration.channel.mode !== 'manual') {
+      return
+    }
+
+    try {
+      laboratorySimulation.value = applyManualBitFlip(activeSimulation, position)
+      errorMessage.value = null
+    } catch (error: unknown) {
+      errorMessage.value =
+        error instanceof Error ? error.message : 'No se pudo alterar el bit seleccionado.'
+    }
+  }
+
+  function clearLaboratory(): void {
+    laboratorySimulation.value = null
+    errorMessage.value = null
+  }
+
   function resetSimulation(): void {
     player.reset()
     errorMessage.value = null
@@ -105,6 +136,14 @@ export function useCrcSimulator() {
     return { mode: 'none' }
   }
 
+  function createConfiguredSimulation(): CrcSimulation {
+    return createCrcSimulation({
+      input: { kind: inputKind.value, value: inputValue.value },
+      generator: generator.value,
+      channel: createChannelPlan(channelMode.value),
+    })
+  }
+
   return {
     experienceMode,
     inputKind,
@@ -113,10 +152,14 @@ export function useCrcSimulator() {
     channelMode,
     playbackSpeed,
     simulation,
+    laboratorySimulation,
     errorMessage,
     player,
     startSimulation,
+    calculateLaboratory,
     applyManualAlteration,
+    applyLaboratoryManualAlteration,
     resetSimulation,
+    clearLaboratory,
   }
 }
