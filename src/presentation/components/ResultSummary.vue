@@ -1,18 +1,32 @@
 <script setup lang="ts">
 import { CircleAlert, ShieldCheck } from 'lucide-vue-next'
+import { computed } from 'vue'
 
 import type { SimulationResult } from '@/simulation'
 
-defineProps<{
+const props = defineProps<{
   result: SimulationResult
 }>()
+
+const messageComparison = computed(() => {
+  const original = Array.from(props.result.originalMessage ?? '')
+  const received = Array.from(props.result.receivedMessage ?? '')
+  const length = Math.max(original.length, received.length)
+
+  return Array.from({ length }, (_, index) => ({
+    index,
+    original: original[index] ?? '∅',
+    received: received[index] ?? '∅',
+    changed: original[index] !== received[index],
+  }))
+})
 </script>
 
 <template>
   <section
     aria-labelledby="result-title"
     aria-live="polite"
-    class="rounded-2xl border p-5"
+    class="result-summary rounded-2xl border p-5 sm:p-6"
     :class="
       result.errorDetected ? 'border-rose-400/30 bg-rose-400/8' : 'border-teal-400/30 bg-teal-400/8'
     "
@@ -37,13 +51,37 @@ defineProps<{
     </div>
 
     <dl class="mt-5 grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
-      <div>
-        <dt class="data-label">Mensaje original</dt>
-        <dd class="text-slate-100">{{ result.originalMessage ?? 'Entrada binaria' }}</dd>
-      </div>
-      <div>
-        <dt class="data-label">Mensaje recibido</dt>
-        <dd class="text-slate-100">{{ result.receivedMessage ?? 'No decodificable' }}</dd>
+      <div class="sm:col-span-2 lg:col-span-2">
+        <dt class="data-label">Comparación de mensajes</dt>
+        <dd v-if="result.originalMessage !== null && result.receivedMessage !== null">
+          <p class="mb-1 text-[10px] text-slate-500">Mensaje original</p>
+          <div class="flex flex-wrap gap-1 font-mono text-lg" aria-label="Mensaje original">
+            <span
+              v-for="character in messageComparison"
+              :key="`original:${character.index}`"
+              class="result-character"
+              :class="character.changed ? 'result-character-changed' : ''"
+            >
+              {{ character.original }}
+            </span>
+          </div>
+          <div class="my-1 text-xs text-slate-500" aria-hidden="true">↓</div>
+          <p class="mb-1 text-[10px] text-slate-500">Mensaje recibido</p>
+          <div class="flex flex-wrap gap-1 font-mono text-lg" aria-label="Mensaje recibido">
+            <span
+              v-for="character in messageComparison"
+              :key="`received:${character.index}`"
+              class="result-character"
+              :class="character.changed ? 'result-character-changed' : ''"
+            >
+              {{ character.received }}
+            </span>
+          </div>
+        </dd>
+        <dd v-else class="text-slate-100">
+          {{ result.originalMessage ?? 'Entrada binaria' }} →
+          {{ result.receivedMessage ?? 'No decodificable' }}
+        </dd>
       </div>
       <div>
         <dt class="data-label">Residuo</dt>

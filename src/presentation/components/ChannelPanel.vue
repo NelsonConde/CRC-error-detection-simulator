@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Radio, Zap } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 import type { ChannelStatus, CrcSimulation, SimulationStep } from '@/simulation'
 
@@ -33,10 +33,23 @@ const receivedBits = computed(() =>
 const alteredPositions = computed(
   () => new Set(props.simulation?.alterations.map(({ position }) => position) ?? []),
 )
+const recentlyFlippedPosition = ref<number | null>(null)
+const isActive = computed(() => status.value === 'ready' || status.value === 'transmitting')
+
+async function flip(position: number): Promise<void> {
+  recentlyFlippedPosition.value = null
+  emit('flip', position)
+  await nextTick()
+  recentlyFlippedPosition.value = position
+}
 </script>
 
 <template>
-  <article class="flow-panel" aria-labelledby="channel-title">
+  <article
+    class="flow-panel"
+    :class="isActive ? 'flow-panel-active' : ''"
+    aria-labelledby="channel-title"
+  >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <Radio :size="18" class="text-blue-300" aria-hidden="true" />
@@ -62,11 +75,14 @@ const alteredPositions = computed(
             :key="position"
             type="button"
             class="bit-button"
-            :class="alteredPositions.has(position) ? 'bit-button-altered' : ''"
+            :class="[
+              alteredPositions.has(position) ? 'bit-button-altered' : '',
+              recentlyFlippedPosition === position ? 'bit-flip-active' : '',
+            ]"
             :disabled="!isManualReady"
             :data-altered="alteredPositions.has(position)"
             :aria-label="`Cambiar bit ${position + 1}, valor actual ${bit}`"
-            @click="emit('flip', position)"
+            @click="flip(position)"
           >
             {{ bit }}
           </button>

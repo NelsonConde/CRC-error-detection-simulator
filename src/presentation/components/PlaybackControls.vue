@@ -24,7 +24,7 @@ const emit = defineEmits<{
 <template>
   <section
     aria-label="Controles de reproducción"
-    class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4"
+    class="rounded-2xl border border-slate-800 bg-slate-900/65 p-4"
   >
     <div class="mb-3 flex items-center justify-between gap-4 text-xs text-slate-400">
       <span>Paso {{ totalSteps === 0 ? 0 : currentIndex + 1 }} de {{ totalSteps }}</span>

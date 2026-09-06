@@ -26,7 +26,7 @@ const activeGroupIndex = computed(() => {
 <template>
   <nav
     aria-label="Progreso de la simulación"
-    class="rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-4"
+    class="rounded-2xl border border-slate-800 bg-slate-900/55 px-4 py-3.5"
   >
     <ol class="grid grid-cols-5 gap-2">
       <li
@@ -36,12 +36,12 @@ const activeGroupIndex = computed(() => {
         :aria-current="index === activeGroupIndex ? 'step' : undefined"
       >
         <span
-          class="relative z-10 grid size-7 place-items-center rounded-full border text-xs font-bold transition-colors"
+          class="timeline-marker relative z-10 grid size-7 place-items-center rounded-full border text-xs font-bold"
           :class="
             index < activeGroupIndex
               ? 'border-teal-400 bg-teal-400 text-slate-950'
               : index === activeGroupIndex
-                ? 'border-cyan-300 bg-cyan-300 text-slate-950 ring-4 ring-cyan-400/10'
+                ? 'timeline-marker-active border-cyan-300 bg-cyan-300 text-slate-950 ring-4 ring-cyan-400/10'
                 : 'border-slate-700 bg-slate-950 text-slate-500'
           "
         >
@@ -49,7 +49,7 @@ const activeGroupIndex = computed(() => {
           <span v-else>{{ index + 1 }}</span>
         </span>
         <span
-          class="truncate text-[11px] font-medium sm:text-xs"
+          class="truncate text-[11px] font-medium transition-colors duration-150 sm:text-xs"
           :class="index <= activeGroupIndex ? 'text-slate-100' : 'text-slate-500'"
         >
           {{ group.label }}
@@ -57,7 +57,7 @@ const activeGroupIndex = computed(() => {
         <span
           v-if="index < groups.length - 1"
           aria-hidden="true"
-          class="absolute top-3.5 left-[60%] -z-0 hidden h-px w-[80%] sm:block"
+          class="timeline-connector absolute top-3.5 left-[60%] -z-0 hidden h-px w-[80%] sm:block"
           :class="index < activeGroupIndex ? 'bg-teal-400/70' : 'bg-slate-700'"
         />
       </li>

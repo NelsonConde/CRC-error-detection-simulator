@@ -42,9 +42,9 @@ const {
 
 <template>
   <div class="min-h-screen bg-slate-950 text-slate-200">
-    <header class="border-b border-slate-800/90 bg-slate-950/90">
+    <header class="border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-sm">
       <div
-        class="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-8"
+        class="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
       >
         <div>
           <div class="flex items-center gap-2">
@@ -85,7 +85,7 @@ const {
     </header>
 
     <main
-      class="mx-auto grid max-w-[1600px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:px-8"
+      class="mx-auto grid max-w-[1600px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:px-8 xl:grid-cols-[300px_minmax(0,1fr)]"
     >
       <SimulatorConfigPanel
         v-model:input-kind="inputKind"
@@ -95,7 +95,7 @@ const {
         v-model:playback-speed="playbackSpeed"
         :error-message="errorMessage"
         :has-simulation="simulation !== null"
-        class="h-fit"
+        class="h-fit lg:sticky lg:top-5"
         @start="startSimulation"
         @reset="resetSimulation"
       />
@@ -103,17 +103,28 @@ const {
       <div class="min-w-0 space-y-5">
         <ProcessTimeline :stage="current?.stage ?? null" />
 
-        <section aria-label="Flujo CRC" class="grid gap-3 xl:grid-cols-3">
-          <SenderPanel :simulation="simulation" :step="current" />
-          <ChannelPanel :simulation="simulation" :step="current" @flip="applyManualAlteration" />
-          <ReceiverPanel :simulation="simulation" :step="current" />
-        </section>
-
         <CurrentStepPanel
           :simulation="simulation"
           :step="current"
           :show-learning="experienceMode === 'learn'"
         />
+
+        <section aria-label="Flujo CRC">
+          <div
+            class="mb-2 flex items-center gap-2 px-1 text-[10px] tracking-[0.16em] text-slate-500 uppercase"
+          >
+            <span>Emisor</span>
+            <span aria-hidden="true">→</span>
+            <span>Canal</span>
+            <span aria-hidden="true">→</span>
+            <span>Receptor</span>
+          </div>
+          <div class="grid gap-3 xl:grid-cols-3">
+            <SenderPanel :simulation="simulation" :step="current" />
+            <ChannelPanel :simulation="simulation" :step="current" @flip="applyManualAlteration" />
+            <ReceiverPanel :simulation="simulation" :step="current" />
+          </div>
+        </section>
 
         <PlaybackControls
           :current-index="currentIndex"
@@ -129,7 +140,9 @@ const {
           @reset="resetSimulation"
         />
 
-        <ResultSummary v-if="current?.stage === 'result'" :result="current.result" />
+        <Transition name="result-reveal" appear>
+          <ResultSummary v-if="current?.stage === 'result'" :result="current.result" />
+        </Transition>
       </div>
     </main>
   </div>

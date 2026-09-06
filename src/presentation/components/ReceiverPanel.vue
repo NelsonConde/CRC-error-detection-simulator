@@ -23,10 +23,15 @@ const showResult = computed(() => status.value === 'complete')
 const showDecodedMessage = computed(
   () => status.value === 'decoding' || status.value === 'complete',
 )
+const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(status.value))
 </script>
 
 <template>
-  <article class="flow-panel" aria-labelledby="receiver-title">
+  <article
+    class="flow-panel"
+    :class="isActive ? 'flow-panel-active' : ''"
+    aria-labelledby="receiver-title"
+  >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <ShieldCheck :size="18" class="text-teal-300" aria-hidden="true" />
@@ -46,18 +51,20 @@ const showDecodedMessage = computed(
           {{ simulation.result.receivedMessage ?? 'No decodificable como UTF-8' }}
         </p>
       </div>
-      <template v-if="showResult">
-        <div>
-          <p class="data-label">Residuo</p>
-          <p class="binary-value">{{ simulation.result.remainder }}</p>
+      <Transition name="status-reveal">
+        <div v-if="showResult" class="space-y-3">
+          <div>
+            <p class="data-label">Residuo</p>
+            <p class="binary-value">{{ simulation.result.remainder }}</p>
+          </div>
+          <p
+            class="text-sm font-medium"
+            :class="simulation.result.errorDetected ? 'text-rose-300' : 'text-teal-300'"
+          >
+            {{ simulation.result.errorDetected ? 'Error detectado' : 'No se detectaron errores' }}
+          </p>
         </div>
-        <p
-          class="text-sm font-medium"
-          :class="simulation.result.errorDetected ? 'text-rose-300' : 'text-teal-300'"
-        >
-          {{ simulation.result.errorDetected ? 'Error detectado' : 'No se detectaron errores' }}
-        </p>
-      </template>
+      </Transition>
     </div>
     <p v-else class="mt-5 text-sm text-slate-500">Esperando la transmisión del canal.</p>
   </article>

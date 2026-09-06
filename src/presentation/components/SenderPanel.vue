@@ -34,10 +34,15 @@ const showPreparedData = computed(
   () => props.step?.stage === 'crc-preparation' || props.step?.stage === 'sender-division',
 )
 const showFrame = computed(() => status.value === 'frame-built')
+const isActive = computed(() => ['encoding', 'crc-prepared', 'dividing'].includes(status.value))
 </script>
 
 <template>
-  <article class="flow-panel" aria-labelledby="sender-title">
+  <article
+    class="flow-panel"
+    :class="isActive ? 'flow-panel-active' : ''"
+    aria-labelledby="sender-title"
+  >
     <header class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <Cpu :size="18" class="text-cyan-300" aria-hidden="true" />
