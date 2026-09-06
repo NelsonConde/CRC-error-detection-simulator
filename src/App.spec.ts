@@ -30,6 +30,17 @@ async function advanceToManualChannel(wrapper: VueWrapper): Promise<void> {
   throw new Error('La simulación no alcanzó el canal manual.')
 }
 
+async function advanceToSenderDivision(wrapper: VueWrapper): Promise<void> {
+  const maximumSteps = 200
+
+  for (let attempt = 0; attempt < maximumSteps; attempt += 1) {
+    if (wrapper.find('[data-testid="crc-division-visualizer"]').exists()) return
+    await wrapper.get('button[aria-label="Siguiente paso"]').trigger('click')
+  }
+
+  throw new Error('La simulación no alcanzó la división del emisor.')
+}
+
 describe('CRC simulator UI', () => {
   it('starts the default simulation', async () => {
     const wrapper = mount(App)
@@ -133,5 +144,16 @@ describe('CRC simulator UI', () => {
       vi.clearAllTimers()
       vi.useRealTimers()
     }
+  })
+
+  it('keeps the CRC visualizer mounted between consecutive division steps', async () => {
+    const wrapper = mount(App)
+    await wrapper.get('button[type="submit"]').trigger('submit')
+    await advanceToSenderDivision(wrapper)
+
+    const visualizer = wrapper.get('[data-testid="crc-division-visualizer"]').element
+    await wrapper.get('button[aria-label="Siguiente paso"]').trigger('click')
+
+    expect(wrapper.get('[data-testid="crc-division-visualizer"]').element).toBe(visualizer)
   })
 })
