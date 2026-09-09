@@ -29,10 +29,11 @@ const emit = defineEmits<{
 
 <template>
   <main
-    class="mx-auto grid w-full max-w-[1600px] flex-1 gap-3 overflow-y-auto px-4 py-3 sm:px-6 lg:min-h-0 lg:grid-cols-[280px_minmax(0,1fr)] lg:overflow-hidden lg:px-8"
+    class="mx-auto grid w-full min-w-0 max-w-[1600px] flex-1 gap-3 overflow-y-auto px-4 py-3 sm:px-6 lg:min-h-0 lg:grid-cols-[280px_minmax(0,1fr)] lg:overflow-hidden lg:px-8"
     aria-label="Laboratorio CRC"
   >
     <LaboratoryConfigPanel
+      class="min-w-0"
       :input-kind="inputKind"
       :input-value="inputValue"
       :generator="generator"
@@ -48,12 +49,13 @@ const emit = defineEmits<{
 
     <LaboratoryResults
       v-if="simulation !== null"
+      class="min-w-0"
       :simulation="simulation"
       @flip="emit('flip', $event)"
     />
     <section
       v-else
-      class="flex min-h-[22rem] items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/35 p-8 text-center lg:min-h-0"
+      class="flex min-h-[22rem] min-w-0 items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-slate-900/35 p-8 text-center lg:min-h-0"
       aria-label="Laboratorio sin resultados"
     >
       <div class="max-w-md">

@@ -49,12 +49,15 @@ onMounted(keepActiveWindowVisible)
 </script>
 
 <template>
-  <div data-testid="crc-division-visualizer" class="flex min-h-0 flex-col gap-2">
+  <div
+    data-testid="crc-division-visualizer"
+    class="flex min-h-0 min-w-0 max-w-full flex-col gap-2 overflow-hidden"
+  >
     <section
       aria-label="Vista global de la división"
-      class="rounded-lg border border-slate-700/70 bg-slate-950/65 p-2"
+      class="min-w-0 max-w-full overflow-hidden rounded-lg border border-slate-700/70 bg-slate-950/65 p-2"
     >
-      <div class="mb-1 flex items-center justify-between gap-3">
+      <div class="mb-1 flex min-w-0 flex-wrap items-center justify-between gap-1 sm:gap-3">
         <p class="data-label mb-0">Cadena completa en proceso</p>
         <span class="text-[10px] text-slate-500">
           Ventana en posición {{ step.division.position + 1 }}
@@ -62,7 +65,7 @@ onMounted(keepActiveWindowVisible)
       </div>
       <div
         ref="globalTrack"
-        class="crc-global-track overflow-x-auto overscroll-x-contain pb-1 font-mono text-sm"
+        class="crc-global-track w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain pb-1 font-mono text-sm"
         tabindex="0"
         aria-label="Cadena binaria desplazable con ventana activa"
       >
@@ -95,10 +98,11 @@ onMounted(keepActiveWindowVisible)
       <span class="h-px w-8 bg-cyan-400/25" aria-hidden="true" />
     </div>
 
-    <div class="grid min-h-0 gap-2 lg:grid-cols-[minmax(0,1fr)_11rem]">
+    <div class="grid min-h-0 min-w-0 max-w-full gap-2 lg:grid-cols-[minmax(0,1fr)_11rem]">
       <div
-        class="overflow-x-auto rounded-lg border border-cyan-400/20 bg-slate-950/80 px-3 py-2"
+        class="min-w-0 max-w-full overflow-x-auto overscroll-x-contain rounded-lg border border-cyan-400/20 bg-slate-950/80 px-3 py-2"
         aria-label="Operación XOR local"
+        tabindex="0"
       >
         <p
           class="mb-1 text-center text-[10px] font-semibold tracking-[0.13em] text-cyan-400 uppercase"
@@ -172,7 +176,7 @@ onMounted(keepActiveWindowVisible)
         </div>
       </div>
 
-      <aside class="rounded-lg border border-slate-800 bg-slate-950/45 p-2.5">
+      <aside class="min-w-0 rounded-lg border border-slate-800 bg-slate-950/45 p-2.5">
         <p class="data-label">Paso de división</p>
         <p class="font-mono text-lg text-slate-100">{{ step.division.position + 1 }}</p>
 

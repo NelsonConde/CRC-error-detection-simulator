@@ -44,13 +44,13 @@ const messageComparison = computed(() => {
 
 <template>
   <section
-    class="min-h-0 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/55 p-4"
+    class="min-h-0 min-w-0 overflow-x-hidden overflow-y-auto rounded-2xl border border-slate-800 bg-slate-900/55 p-4"
     aria-label="Resultados del laboratorio"
   >
     <div
       class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3"
     >
-      <div>
+      <div class="min-w-0">
         <p class="text-[0.65rem] font-semibold tracking-[0.2em] text-cyan-300">
           RESULTADOS DEL CÁLCULO
         </p>
@@ -63,7 +63,7 @@ const messageComparison = computed(() => {
       </span>
     </div>
 
-    <div class="grid gap-3 xl:grid-cols-2">
+    <div class="grid min-w-0 gap-3 xl:grid-cols-2">
       <article class="technical-card">
         <header class="technical-card-header">
           <Send :size="16" aria-hidden="true" />
@@ -184,7 +184,7 @@ const messageComparison = computed(() => {
             {{ channelLabel }}
           </span>
         </header>
-        <div class="grid gap-3 lg:grid-cols-2">
+        <div class="grid min-w-0 gap-3 lg:grid-cols-2">
           <div class="technical-sequence">
             <span>Frame enviado</span>
             <BinarySequence :bits="simulation.sentFrame" label="Frame enviado por el canal" />
@@ -216,7 +216,7 @@ const messageComparison = computed(() => {
           :size="24"
           aria-hidden="true"
         />
-        <div>
+        <div class="min-w-0">
           <h3>
             {{ simulation.result.errorDetected ? 'ERROR DETECTADO' : 'NO SE DETECTARON ERRORES' }}
           </h3>

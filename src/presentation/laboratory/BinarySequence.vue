@@ -15,19 +15,21 @@ defineProps<{
     :data-bits="bits"
     tabindex="0"
   >
-    <span
-      v-for="(bit, index) in bits"
-      :key="index"
-      class="lab-sequence-bit"
-      :class="
-        compareWith?.[index] !== undefined && compareWith[index] !== bit
-          ? 'lab-sequence-bit-altered'
-          : ''
-      "
-      :data-altered="
-        (compareWith?.[index] !== undefined && compareWith[index] !== bit) || undefined
-      "
-      >{{ bit }}</span
-    >
+    <span class="inline-block min-w-max">
+      <span
+        v-for="(bit, index) in bits"
+        :key="index"
+        class="lab-sequence-bit"
+        :class="
+          compareWith?.[index] !== undefined && compareWith[index] !== bit
+            ? 'lab-sequence-bit-altered'
+            : ''
+        "
+        :data-altered="
+          (compareWith?.[index] !== undefined && compareWith[index] !== bit) || undefined
+        "
+        >{{ bit }}</span
+      >
+    </span>
   </div>
 </template>
