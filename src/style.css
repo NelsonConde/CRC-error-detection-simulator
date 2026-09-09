@@ -68,7 +68,7 @@
   }
 
   .flow-panel-body {
-    @apply min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1;
+    @apply min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain pr-1;
     scrollbar-width: thin;
     scrollbar-color: rgb(51 65 85) transparent;
   }
@@ -82,7 +82,24 @@
   }
 
   .binary-value {
-    @apply overflow-hidden font-mono text-xs leading-relaxed text-slate-300 break-all;
+    @apply block w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain font-mono text-xs leading-relaxed whitespace-nowrap text-slate-300 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85) transparent;
+    touch-action: pan-x;
+  }
+
+  .text-value-scroll {
+    @apply block w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain text-slate-200 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85) transparent;
+    touch-action: pan-x;
+  }
+
+  .binary-bit-strip {
+    @apply w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain rounded-md font-mono outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85) transparent;
+    touch-action: pan-x;
   }
 
   .control-button {
@@ -367,9 +384,10 @@
   }
 
   .result-binary {
-    @apply overflow-x-auto font-mono text-xs whitespace-nowrap text-slate-300;
+    @apply block w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain font-mono text-xs whitespace-nowrap text-slate-300;
     scrollbar-width: thin;
     scrollbar-color: rgb(51 65 85) transparent;
+    touch-action: pan-x;
   }
 
   .lab-field {
@@ -410,7 +428,7 @@
   }
 
   .technical-data-grid {
-    @apply grid gap-2 sm:grid-cols-2;
+    @apply grid min-w-0 gap-2 sm:grid-cols-2;
   }
 
   .technical-data-grid > div {
@@ -419,12 +437,12 @@
 
   .technical-data-grid dt,
   .technical-sequence > span,
-  .message-comparison span {
+  .message-comparison > div > span {
     @apply block text-[0.65rem] font-semibold tracking-wide text-slate-500 uppercase;
   }
 
   .technical-data-grid dd {
-    @apply mt-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-200;
+    @apply mt-1 min-w-0 text-sm text-slate-200 break-words;
   }
 
   .technical-sequence {
@@ -432,7 +450,7 @@
   }
 
   .lab-binary-scroll {
-    @apply mt-1.5 max-w-full overflow-x-auto rounded-md font-mono text-xs whitespace-nowrap text-slate-300 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60;
+    @apply mt-1.5 block w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain rounded-md font-mono text-xs whitespace-nowrap text-slate-300 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60;
     scrollbar-width: thin;
     scrollbar-color: rgb(51 65 85) transparent;
     touch-action: pan-x;
@@ -459,7 +477,10 @@
   }
 
   .message-comparison strong {
-    @apply mt-1 block overflow-hidden text-sm text-ellipsis whitespace-nowrap text-white;
+    @apply mt-1 block w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain text-sm whitespace-nowrap text-white;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(51 65 85) transparent;
+    touch-action: pan-x;
   }
 
   .lab-message-character {

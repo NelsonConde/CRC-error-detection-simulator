@@ -58,6 +58,19 @@ describe('CRC simulator UI', () => {
     expect(wrapper.text()).toContain('HOLA')
   })
 
+  it('starts a long text simulation and keeps the current step available', async () => {
+    const wrapper = mount(App)
+    const longMessage =
+      'CRC permite detectar alteraciones durante una transmisión de datos extensa.'
+
+    await wrapper.get('textarea[aria-label="Mensaje"]').setValue(longMessage)
+    await wrapper.get('button[type="submit"]').trigger('submit')
+
+    expect(wrapper.get('[data-testid="current-step-panel"]').text()).toContain(longMessage)
+    expect(wrapper.get('[data-testid="playback-step"]').text()).toMatch(/^Paso 1 de \d+$/)
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+  })
+
   it('preserves the Learn session and configuration when switching modes', async () => {
     const wrapper = mount(App)
     await wrapper.get('textarea[aria-label="Mensaje"]').setValue('HOLA CRC')
@@ -298,6 +311,37 @@ describe('CRC laboratory UI', () => {
     expect(wrapper.get('[data-testid="lab-received-frame"]').attributes('data-bits')).not.toBe(
       firstAlteredFrame,
     )
+  })
+
+  it('supports a 256-bit manual scenario without losing its technical results', async () => {
+    const wrapper = mount(App)
+    const longBinaryInput = '01001101'.repeat(32)
+
+    await switchToLaboratory(wrapper)
+    const binaryButton = wrapper
+      .findAll('button')
+      .find((button) => button.text().trim() === 'Binario')
+    if (binaryButton === undefined) throw new Error('No se encontró el selector Binario.')
+    await binaryButton.trigger('click')
+    await wrapper.get('textarea[aria-label="Bits de laboratorio"]').setValue(longBinaryInput)
+    await wrapper.get('select[aria-label="Modo del canal del laboratorio"]').setValue('manual')
+    await calculateLaboratory(wrapper)
+
+    expect(wrapper.get('[data-testid="lab-sender-frame"]').attributes('data-bits')).toHaveLength(
+      260,
+    )
+    expect(wrapper.get('[data-testid="lab-sender-crc"]').text()).toHaveLength(4)
+    expect(wrapper.get('[data-testid="lab-received-frame"]').attributes('data-bits')).toHaveLength(
+      260,
+    )
+    expect(wrapper.get('[data-testid="lab-receiver-remainder"]').text()).toBe('0000')
+
+    await wrapper
+      .get('button[aria-label="Alterar bit de laboratorio 200, valor actual 1"]')
+      .trigger('click')
+
+    expect(wrapper.text()).toContain('Bits alterados: 200')
+    expect(wrapper.get('[data-testid="lab-receiver-remainder"]').text()).not.toBe('0000')
   })
 
   it('lets a manual bit be restored while retaining a coherent history', async () => {

@@ -50,8 +50,8 @@ async function flip(position: number): Promise<void> {
     :class="isActive ? 'flow-panel-active' : ''"
     aria-labelledby="channel-title"
   >
-    <header class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
+    <header class="flex min-w-0 items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-2.5">
         <Radio :size="16" class="text-blue-300" aria-hidden="true" />
         <h2 id="channel-title" class="text-sm font-semibold text-slate-100">Canal</h2>
       </div>
@@ -59,33 +59,35 @@ async function flip(position: number): Promise<void> {
     </header>
 
     <div v-if="simulation && isVisible" class="flow-panel-body mt-2 space-y-2 text-xs">
-      <div>
+      <div class="min-w-0">
         <p class="data-label">Trama enviada</p>
-        <p class="binary-value">{{ simulation.sentFrame }}</p>
+        <p class="binary-value" tabindex="0">{{ simulation.sentFrame }}</p>
       </div>
 
-      <div>
+      <div class="min-w-0">
         <div class="mb-2 flex items-center justify-between gap-3">
           <p class="data-label mb-0">Trama en el canal</p>
           <span v-if="isManualReady" class="text-[11px] text-cyan-300">Selecciona bits</span>
         </div>
-        <div class="flex flex-wrap gap-1 font-mono" aria-label="Bits de la trama en el canal">
-          <button
-            v-for="(bit, position) in receivedBits"
-            :key="position"
-            type="button"
-            class="bit-button"
-            :class="[
-              alteredPositions.has(position) ? 'bit-button-altered' : '',
-              recentlyFlippedPosition === position ? 'bit-flip-active' : '',
-            ]"
-            :disabled="!isManualReady"
-            :data-altered="alteredPositions.has(position)"
-            :aria-label="`Cambiar bit ${position + 1}, valor actual ${bit}`"
-            @click="flip(position)"
-          >
-            {{ bit }}
-          </button>
+        <div class="binary-bit-strip" aria-label="Bits de la trama en el canal" tabindex="0">
+          <div class="flex w-max min-w-full gap-1 py-0.5">
+            <button
+              v-for="(bit, position) in receivedBits"
+              :key="position"
+              type="button"
+              class="bit-button shrink-0"
+              :class="[
+                alteredPositions.has(position) ? 'bit-button-altered' : '',
+                recentlyFlippedPosition === position ? 'bit-flip-active' : '',
+              ]"
+              :disabled="!isManualReady"
+              :data-altered="alteredPositions.has(position)"
+              :aria-label="`Cambiar bit ${position + 1}, valor actual ${bit}`"
+              @click="flip(position)"
+            >
+              {{ bit }}
+            </button>
+          </div>
         </div>
       </div>
 

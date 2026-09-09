@@ -49,12 +49,12 @@ const completedEncodingSteps = computed(() => {
 <template>
   <section
     data-testid="current-step-panel"
-    class="current-step-panel flex h-full min-h-[28rem] overflow-hidden rounded-xl border border-cyan-400/25 bg-slate-900 p-3 sm:p-4 lg:min-h-0"
+    class="current-step-panel flex h-full min-h-[28rem] min-w-0 overflow-hidden rounded-xl border border-cyan-400/25 bg-slate-900 p-3 sm:p-4 lg:min-h-0"
     aria-live="polite"
   >
-    <div class="step-content flex min-h-0 flex-1 flex-col">
+    <div class="step-content flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <div v-if="step" class="mb-3 flex shrink-0 flex-wrap items-start justify-between gap-2">
-        <div>
+        <div class="min-w-0">
           <p class="mb-1 text-xs font-semibold tracking-[0.16em] text-cyan-400 uppercase">
             {{ stageLabels[step.stage] }}
           </p>
@@ -81,7 +81,7 @@ const completedEncodingSteps = computed(() => {
           class="mb-3 flex shrink-0 items-start gap-2 rounded-lg border border-blue-400/20 bg-blue-400/8 px-3 py-2 text-xs leading-relaxed text-blue-100"
         >
           <Info :size="16" class="mt-0.5 shrink-0 text-blue-300" aria-hidden="true" />
-          <p>{{ step.learning.explanation }}</p>
+          <p class="min-w-0 break-words">{{ step.learning.explanation }}</p>
         </div>
 
         <div
@@ -112,10 +112,10 @@ const completedEncodingSteps = computed(() => {
         </div>
 
         <div
-          class="stage-content-area relative min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1"
+          class="stage-content-area relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain pr-1"
         >
           <Transition name="stage-content">
-            <div :key="step.stage" class="stage-content">
+            <div :key="step.stage" class="stage-content min-w-0 max-w-full">
               <div v-if="step.stage === 'initial'" class="space-y-2">
                 <p class="data-label">Entrada original</p>
                 <p class="text-lg text-slate-100 break-words">{{ step.input.value }}</p>
@@ -133,7 +133,7 @@ const completedEncodingSteps = computed(() => {
                   <div
                     v-for="encodingStep in completedEncodingSteps"
                     :key="encodingStep.id"
-                    class="encoding-card rounded-xl border bg-slate-950/60 p-3 transition-[border-color,background-color,opacity,transform] duration-150"
+                    class="encoding-card min-w-0 rounded-xl border bg-slate-950/60 p-3 transition-[border-color,background-color,opacity,transform] duration-150"
                     :class="
                       encodingStep.id === step.id
                         ? 'encoding-card-current border-cyan-300/70 bg-cyan-400/8 opacity-100'
@@ -151,33 +151,35 @@ const completedEncodingSteps = computed(() => {
                 </TransitionGroup>
                 <div>
                   <p class="data-label">Bits acumulados</p>
-                  <p class="binary-value text-cyan-100">{{ step.accumulatedBits }}</p>
+                  <p class="binary-value text-cyan-100" tabindex="0">
+                    {{ step.accumulatedBits }}
+                  </p>
                 </div>
               </div>
 
               <div v-else-if="step.stage === 'encoding'" class="space-y-2">
                 <p class="data-label">Entrada binaria validada</p>
-                <p class="binary-value text-cyan-100">{{ step.validatedData }}</p>
+                <p class="binary-value text-cyan-100" tabindex="0">{{ step.validatedData }}</p>
               </div>
 
               <div v-else-if="step.stage === 'crc-preparation'" class="space-y-4">
                 <div class="grid gap-3 sm:grid-cols-3">
-                  <div class="rounded-lg bg-slate-950/60 p-3">
+                  <div class="min-w-0 rounded-lg bg-slate-950/60 p-3">
                     <p class="data-label">Datos</p>
-                    <p class="binary-value">{{ step.data }}</p>
+                    <p class="binary-value" tabindex="0">{{ step.data }}</p>
                   </div>
-                  <div class="rounded-lg bg-slate-950/60 p-3">
+                  <div class="min-w-0 rounded-lg bg-slate-950/60 p-3">
                     <p class="data-label">Ceros añadidos</p>
                     <p class="binary-value text-blue-300">{{ step.zeroPadding }}</p>
                   </div>
-                  <div class="rounded-lg bg-slate-950/60 p-3">
+                  <div class="min-w-0 rounded-lg bg-slate-950/60 p-3">
                     <p class="data-label">Generador · grado {{ step.generator.degree }}</p>
                     <p class="binary-value text-teal-300">{{ step.generator.bits }}</p>
                   </div>
                 </div>
                 <div>
                   <p class="data-label">Dividendo preparado</p>
-                  <p class="binary-value">{{ step.augmentedData }}</p>
+                  <p class="binary-value" tabindex="0">{{ step.augmentedData }}</p>
                 </div>
               </div>
 
@@ -195,16 +197,20 @@ const completedEncodingSteps = computed(() => {
 
               <TransmissionVisualizer v-else-if="step.stage === 'transmission'" :step="step" />
 
-              <div v-else-if="step.stage === 'channel-ready'" class="grid gap-4 sm:grid-cols-2">
-                <div>
+              <div
+                v-else-if="step.stage === 'channel-ready'"
+                class="grid min-w-0 gap-4 sm:grid-cols-2"
+              >
+                <div class="min-w-0">
                   <p class="data-label">Trama enviada</p>
-                  <p class="binary-value">{{ step.sentFrame }}</p>
+                  <p class="binary-value" tabindex="0">{{ step.sentFrame }}</p>
                 </div>
-                <div>
+                <div class="min-w-0">
                   <p class="data-label">Trama resultante</p>
                   <p
                     class="binary-value"
                     :class="step.alterations.length ? 'text-rose-200' : 'text-teal-200'"
+                    tabindex="0"
                   >
                     {{ step.receivedFrame }}
                   </p>
@@ -213,7 +219,7 @@ const completedEncodingSteps = computed(() => {
 
               <div v-else-if="step.stage === 'receiver-ready'">
                 <p class="data-label">Trama lista para verificar</p>
-                <p class="binary-value">{{ step.receivedFrame }}</p>
+                <p class="binary-value" tabindex="0">{{ step.receivedFrame }}</p>
               </div>
 
               <div v-else-if="step.stage === 'decoding'">

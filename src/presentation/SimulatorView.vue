@@ -98,7 +98,7 @@ watch(experienceMode, (mode) => {
 
     <main
       v-if="experienceMode === 'learn'"
-      class="mx-auto grid w-full max-w-[1600px] flex-1 gap-3 px-4 py-3 sm:px-6 lg:min-h-0 lg:grid-cols-[240px_minmax(0,1fr)] lg:overflow-hidden lg:px-8 xl:grid-cols-[260px_minmax(0,1fr)]"
+      class="mx-auto grid w-full min-w-0 max-w-[1600px] flex-1 gap-3 px-4 py-3 sm:px-6 lg:min-h-0 lg:grid-cols-[240px_minmax(0,1fr)] lg:overflow-hidden lg:px-8 xl:grid-cols-[260px_minmax(0,1fr)]"
     >
       <SimulatorConfigPanel
         v-model:input-kind="inputKind"
@@ -113,7 +113,7 @@ watch(experienceMode, (mode) => {
       />
 
       <div
-        class="grid min-w-0 gap-3 lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_10rem_auto] lg:overflow-hidden"
+        class="grid min-w-0 gap-3 overflow-hidden lg:min-h-0 lg:grid-rows-[auto_minmax(0,1fr)_10rem_auto]"
       >
         <ProcessTimeline :stage="current?.stage ?? null" />
 
@@ -123,8 +123,8 @@ watch(experienceMode, (mode) => {
           :show-learning="experienceMode === 'learn'"
         />
 
-        <section aria-label="Flujo CRC" class="min-h-0">
-          <div class="grid h-full min-h-0 gap-2 lg:grid-cols-3">
+        <section aria-label="Flujo CRC" class="min-h-0 min-w-0 overflow-hidden">
+          <div class="grid h-full min-h-0 min-w-0 gap-2 lg:grid-cols-3">
             <SenderPanel :simulation="simulation" :step="current" />
             <ChannelPanel :simulation="simulation" :step="current" @flip="applyManualAlteration" />
             <ReceiverPanel :simulation="simulation" :step="current" />

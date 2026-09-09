@@ -32,8 +32,8 @@ const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(statu
     :class="isActive ? 'flow-panel-active' : ''"
     aria-labelledby="receiver-title"
   >
-    <header class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
+    <header class="flex min-w-0 items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-2.5">
         <ShieldCheck :size="16" class="text-teal-300" aria-hidden="true" />
         <h2 id="receiver-title" class="text-sm font-semibold text-slate-100">Receptor</h2>
       </div>
@@ -41,13 +41,13 @@ const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(statu
     </header>
 
     <div v-if="simulation && isVisible" class="flow-panel-body mt-2 space-y-2 text-xs">
-      <div>
+      <div class="min-w-0">
         <p class="data-label">Trama recibida</p>
-        <p class="binary-value">{{ simulation.receivedFrame }}</p>
+        <p class="binary-value" tabindex="0">{{ simulation.receivedFrame }}</p>
       </div>
       <div v-if="showDecodedMessage">
         <p class="data-label">Mensaje reconstruido</p>
-        <p class="text-slate-100">
+        <p class="text-slate-100 break-words">
           {{ simulation.result.receivedMessage ?? 'No decodificable como UTF-8' }}
         </p>
       </div>
@@ -55,7 +55,7 @@ const isActive = computed(() => ['ready', 'dividing', 'decoding'].includes(statu
         <div v-if="showResult" class="space-y-3">
           <div>
             <p class="data-label">Residuo</p>
-            <p class="binary-value">{{ simulation.result.remainder }}</p>
+            <p class="binary-value" tabindex="0">{{ simulation.result.remainder }}</p>
           </div>
           <p
             class="text-sm font-medium"
